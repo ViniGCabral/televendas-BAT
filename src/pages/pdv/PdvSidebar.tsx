@@ -11,7 +11,7 @@ export function PdvSidebar() {
 
   const pdv = pdvs.find((p) => p.id === id) || pdvs[0];
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const [visitStatus, setVisitStatus] = useState<"idle" | "in_progress">("idle");
   return (
     <aside className="w-[360px] bg-white dark:bg-slate-900 border-r border-surface-container-high dark:border-slate-800 transition-all duration-300 ease-in-out flex flex-col shrink-0 h-full overflow-y-auto">
       {/* Cabeçalho da Sidebar */}
@@ -61,10 +61,23 @@ export function PdvSidebar() {
              <span className="bg-green-100 text-green-700 px-2 py-0.5 rounded-full uppercase tracking-widest">ATIVO</span>
           </div>
 
-          <button onClick={() => setIsModalOpen(true)} className="mt-2 w-full bg-secondary text-white py-3 rounded-xl font-bold text-sm shadow-md hover:shadow-lg hover:bg-secondary-dark transition-all flex items-center justify-center gap-2">
-             <span className="material-symbols-outlined text-lg">play_arrow</span>
-             {t('pdv_btn_start_service')}
-          </button>
+          {visitStatus === "idle" ? (
+            <button onClick={() => setIsModalOpen(true)} className="mt-2 w-full bg-secondary text-white py-3 rounded-xl font-bold text-sm shadow-md hover:shadow-lg hover:bg-secondary-dark transition-all flex items-center justify-center gap-2 animate-fade-in">
+               <span className="material-symbols-outlined text-lg font-bold">play_arrow</span>
+               {t('pdv_btn_start_service')}
+            </button>
+          ) : (
+             <div className="mt-2 flex flex-col gap-2 animate-fade-in">
+                <div className="bg-green-100 text-green-800 border border-green-200 py-2 px-3 rounded-xl flex justify-center items-center gap-1.5 shadow-sm">
+                   <span className="material-symbols-outlined text-[16px] animate-pulse">sensors</span>
+                   <span className="text-xs font-black uppercase tracking-widest">Em Andamento</span>
+                </div>
+                <button onClick={() => setVisitStatus("idle")} className="w-full bg-error text-white py-3 rounded-xl font-bold text-sm shadow-md hover:shadow-lg hover:brightness-110 transition-all flex items-center justify-center gap-2">
+                   <span className="material-symbols-outlined text-lg">stop_circle</span>
+                   Encerrar Visita
+                </button>
+             </div>
+          )}
         </div>
 
         {/* Action Grid */}
@@ -124,7 +137,10 @@ export function PdvSidebar() {
 
              <div className="flex flex-col gap-3">
                 <button 
-                  onClick={() => setIsModalOpen(false)} 
+                  onClick={() => {
+                    setIsModalOpen(false);
+                    setVisitStatus("in_progress");
+                  }} 
                   className="w-full bg-[#00A84D] text-white py-4 rounded-2xl font-black text-sm shadow-md hover:brightness-110 active:scale-[0.98] transition-all uppercase tracking-widest"
                 >
                   Iniciar Visita
