@@ -1,8 +1,6 @@
 import { useState } from "react";
-import { useLanguage } from "../../context/LanguageContext";
 
 export function PdvParcerias() {
-  const { t } = useLanguage();
   const [simulatorValue, setSimulatorValue] = useState(44);
 
   // Simple simulator logic match print: 0% = 0, 100% = 14
