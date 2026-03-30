@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { useAppContext } from "../../context/AppContext";
 import { useLanguage } from "../../context/LanguageContext";
@@ -9,6 +10,7 @@ export function PdvSidebar() {
   const { t } = useLanguage();
 
   const pdv = pdvs.find((p) => p.id === id) || pdvs[0];
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <aside className="w-[360px] bg-white dark:bg-slate-900 border-r border-surface-container-high dark:border-slate-800 transition-all duration-300 ease-in-out flex flex-col shrink-0 h-full overflow-y-auto">
@@ -59,7 +61,7 @@ export function PdvSidebar() {
              <span className="bg-green-100 text-green-700 px-2 py-0.5 rounded-full uppercase tracking-widest">ATIVO</span>
           </div>
 
-          <button className="mt-2 w-full bg-secondary text-white py-3 rounded-xl font-bold text-sm shadow-md hover:shadow-lg hover:bg-secondary-dark transition-all flex items-center justify-center gap-2">
+          <button onClick={() => setIsModalOpen(true)} className="mt-2 w-full bg-secondary text-white py-3 rounded-xl font-bold text-sm shadow-md hover:shadow-lg hover:bg-secondary-dark transition-all flex items-center justify-center gap-2">
              <span className="material-symbols-outlined text-lg">play_arrow</span>
              {t('pdv_btn_start_service')}
           </button>
@@ -92,6 +94,52 @@ export function PdvSidebar() {
              {t('pdv_sidebar_btn_schedule')}
           </Link>
       </div>
+
+      {/* Confirmation Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-0">
+          <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setIsModalOpen(false)}></div>
+          <div className="bg-white rounded-[32px] p-8 max-w-sm w-full relative z-10 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+             
+             <div className="text-center mb-6">
+                <h2 className="text-xl font-black font-headline text-on-surface mb-2 leading-tight">Confirme as atividades mandatórias</h2>
+                <p className="text-sm text-outline font-medium">Certifique-se de realizar as tarefas obrigatórias para este PDV antes de encerrar sua visita.</p>
+             </div>
+
+             <div className="flex flex-col gap-3 mb-8">
+                {[
+                  { id: 1, text: "Estimule Sell Out de 30 PCTs de Dunhill Red" },
+                  { id: 2, text: "Venda +40 PCTs via Prime" },
+                  { id: 3, text: "Ative PDV no Prime" },
+                  { id: 4, text: "Ative Staff no Conecta Você" }
+                ].map((act) => (
+                  <div key={act.id} className="bg-surface-container-lowest border border-surface-container-high rounded-xl p-4 flex items-center gap-4">
+                     <div className="w-6 h-6 rounded-full border border-primary/30 bg-primary/5 text-primary flex items-center justify-center text-xs font-bold shrink-0">
+                        {act.id}
+                     </div>
+                     <span className="text-sm font-semibold text-on-surface leading-tight">{act.text}</span>
+                  </div>
+                ))}
+             </div>
+
+             <div className="flex flex-col gap-3">
+                <button 
+                  onClick={() => setIsModalOpen(false)} 
+                  className="w-full bg-[#00A84D] text-white py-4 rounded-2xl font-black text-sm shadow-md hover:brightness-110 active:scale-[0.98] transition-all uppercase tracking-widest"
+                >
+                  Iniciar Visita
+                </button>
+                <button 
+                  onClick={() => setIsModalOpen(false)} 
+                  className="w-full bg-surface-container-lowest text-on-surface-variant py-4 rounded-2xl font-bold text-sm hover:bg-surface-container hover:text-on-surface transition-colors"
+                >
+                  Voltar
+                </button>
+             </div>
+
+          </div>
+        </div>
+      )}
 
     </aside>
   );

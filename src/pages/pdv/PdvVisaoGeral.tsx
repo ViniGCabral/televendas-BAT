@@ -13,6 +13,27 @@ export function PdvVisaoGeral() {
   const [newActivityText, setNewActivityText] = useState("");
   const [isAddingActivity, setIsAddingActivity] = useState(false);
 
+  const [notes, setNotes] = useState([
+    { id: 1, title: t('pdv_vg_note_1_title'), time: t('pdv_vg_note_1_time'), desc: t('pdv_vg_note_1_desc'), isRecent: true },
+    { id: 2, title: t('pdv_vg_note_2_title'), time: t('pdv_vg_note_2_time'), desc: t('pdv_vg_note_2_desc'), isRecent: false }
+  ]);
+  const [isAddingNote, setIsAddingNote] = useState(false);
+  const [newNoteTitle, setNewNoteTitle] = useState("");
+  const [newNoteDesc, setNewNoteDesc] = useState("");
+
+  const addNote = () => {
+    if (newNoteTitle.trim() && newNoteDesc.trim()) {
+      setNotes([{ id: Date.now(), title: newNoteTitle, desc: newNoteDesc, time: 'Agora', isRecent: true }, ...notes]);
+      setNewNoteTitle("");
+      setNewNoteDesc("");
+      setIsAddingNote(false);
+    }
+  };
+
+  const removeNote = (id: number) => {
+    setNotes(notes.filter(n => n.id !== id));
+  };
+
   const toggleActivity = (id: number) => {
     setActivities(activities.map(act => act.id === id ? { ...act, done: !act.done } : act));
   };
@@ -51,7 +72,7 @@ export function PdvVisaoGeral() {
               <span className="bg-primary/10 text-primary text-[10px] font-bold px-2 py-0.5 rounded-full animate-pulse shadow-sm">NOVA INSIGHT</span>
            </div>
            <p className="text-lg md:text-xl font-medium text-on-surface leading-snug">
-              {t('pdv_ai_insight_share')}
+              Alto risco de perder Market Share este mês.
            </p>
         </div>
         
@@ -186,33 +207,53 @@ export function PdvVisaoGeral() {
              <span className="material-symbols-outlined text-primary text-xl">notes</span>
              <h3 className="font-bold font-headline text-lg text-on-surface">{t('pdv_vg_notes_title')}</h3>
           </div>
-          <button className="text-primary font-bold text-sm bg-primary/10 px-4 py-2 flex items-center gap-1.5 hover:bg-primary/20 rounded-lg transition-colors">
+          <button onClick={() => setIsAddingNote(true)} className="text-primary font-bold text-sm bg-primary/10 px-4 py-2 flex items-center gap-1.5 hover:bg-primary/20 rounded-lg transition-colors">
             {t('pdv_vg_btn_add_note')}
           </button>
         </div>
 
         <div className="flex flex-col gap-4">
-           {/* Note 1 */}
-           <div className="bg-surface-container-lowest border-l-4 border-l-primary rounded-r-xl p-5 shadow-sm">
-              <div className="flex justify-between items-start mb-2">
-                 <h4 className="font-bold text-on-surface text-sm">{t('pdv_vg_note_1_title')}</h4>
-                 <span className="text-[11px] text-outline font-medium">{t('pdv_vg_note_1_time')}</span>
-              </div>
-              <p className="text-sm text-on-surface-variant leading-relaxed">
-                 {t('pdv_vg_note_1_desc')}
-              </p>
-           </div>
-           
-           {/* Note 2 */}
-           <div className="bg-surface-container-lowest border-l-4 border-l-surface-container-highest rounded-r-xl p-5">
-              <div className="flex justify-between items-start mb-2">
-                 <h4 className="font-bold text-on-surface text-sm">{t('pdv_vg_note_2_title')}</h4>
-                 <span className="text-[11px] text-outline font-medium">{t('pdv_vg_note_2_time')}</span>
-              </div>
-              <p className="text-sm text-on-surface-variant leading-relaxed">
-                 {t('pdv_vg_note_2_desc')}
-              </p>
-           </div>
+           {isAddingNote && (
+             <div className="bg-surface-container-lowest border border-primary/30 rounded-xl p-5 mb-2 shadow-sm animate-fade-in flex flex-col gap-3">
+               <input 
+                 autoFocus
+                 type="text" 
+                 placeholder="Título da nota..." 
+                 value={newNoteTitle}
+                 onChange={(e) => setNewNoteTitle(e.target.value)}
+                 className="w-full bg-transparent border-b border-surface-container-highest focus:border-primary outline-none text-sm font-bold text-on-surface pb-1"
+               />
+               <textarea 
+                 rows={2}
+                 placeholder="Descreva a anotação..." 
+                 value={newNoteDesc}
+                 onChange={(e) => setNewNoteDesc(e.target.value)}
+                 className="w-full bg-transparent border border-surface-container-highest focus:border-primary rounded-lg p-2 outline-none text-sm text-on-surface resize-none"
+               />
+               <div className="flex justify-end gap-2 mt-1">
+                 <button onClick={() => setIsAddingNote(false)} className="text-xs font-bold text-outline hover:text-on-surface px-3 py-1.5">Cancelar</button>
+                 <button onClick={addNote} className="text-xs font-bold bg-primary text-white px-4 py-1.5 rounded-lg hover:brightness-110">Salvar Nota</button>
+               </div>
+             </div>
+           )}
+
+           {notes.map((note) => (
+             <div key={note.id} className={`group relative bg-surface-container-lowest border-l-4 rounded-r-xl p-5 shadow-sm transition-all ${note.isRecent ? 'border-l-primary' : 'border-l-surface-container-highest'}`}>
+                <div className="flex justify-between items-start mb-2 pr-8">
+                   <h4 className="font-bold text-on-surface text-sm">{note.title}</h4>
+                   <span className="text-[11px] text-outline font-medium">{note.time}</span>
+                </div>
+                <p className="text-sm text-on-surface-variant leading-relaxed">
+                   {note.desc}
+                </p>
+                <button onClick={() => removeNote(note.id)} className="absolute top-4 right-3 text-outline hover:text-error opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-full hover:bg-error/10 flex items-center justify-center">
+                  <span className="material-symbols-outlined text-[18px]">delete</span>
+                </button>
+             </div>
+           ))}
+           {notes.length === 0 && !isAddingNote && (
+             <p className="text-sm text-outline italic text-center py-4">Nenhuma nota cadastrada para este cliente.</p>
+           )}
         </div>
       </div>
 
