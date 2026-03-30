@@ -224,10 +224,10 @@ export function Agenda() {
   const minStartDay = new Date(minYear, minMonth, 1).getDay();
 
   return (
-    <div className="flex h-full gap-6 pb-20 relative">
+    <div className="flex gap-6 relative overflow-hidden" style={{ height: "calc(100vh - 145px)" }}>
 
       {/* LEFT COLUMN */}
-      <div className="w-[280px] shrink-0 flex flex-col gap-6 h-full overflow-y-auto pr-2 pb-10">
+      <div className="w-[280px] shrink-0 flex flex-col gap-6 h-full pr-2">
         
         <button 
           onClick={() => {

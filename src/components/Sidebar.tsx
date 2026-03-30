@@ -87,11 +87,22 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
           {isOpen && isPdvsOpen && (
             <div className="pl-12 pr-4 py-2 flex flex-col gap-2 mt-1">
               <NavLink
-                to="/pdvs"
-                end
-                className={({ isActive }) =>
+                to="/pdvs?view=dia"
+                className={() =>
                   `text-sm p-2 rounded-lg transition-colors ${
-                    isActive
+                    location.search.includes('view=dia')
+                      ? "text-primary font-bold bg-primary/10"
+                      : "text-slate-500 hover:text-slate-800 hover:bg-surface-container-low"
+                  }`
+                }
+              >
+                {t('pdvs_day_pdvs')}
+              </NavLink>
+              <NavLink
+                to="/pdvs"
+                className={() =>
+                  `text-sm p-2 rounded-lg transition-colors ${
+                    !location.search.includes('view=dia') && location.pathname === '/pdvs'
                       ? "text-primary font-bold bg-primary/10"
                       : "text-slate-500 hover:text-slate-800 hover:bg-surface-container-low"
                   }`

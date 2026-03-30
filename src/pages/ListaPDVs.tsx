@@ -1,10 +1,43 @@
 import { useAppContext } from "../context/AppContext";
 import { useLanguage } from "../context/LanguageContext";
 import { pt } from "../locales/pt";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { useState, useRef, useEffect } from "react";
 
 export function ListaPDVs() {
   const { pdvs, events } = useAppContext();
   const { t } = useLanguage();
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  
+  const currentView = searchParams.get("view") || "base"; // "base" | "dia"
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const filterRef = useRef<HTMLDivElement>(null);
+  const [activeFilters, setActiveFilters] = useState({
+    agendamento_hoje: false,
+    share_critico: false,
+    boost_plan: false,
+    potencial_upsell: false
+  });
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (filterRef.current && !filterRef.current.contains(event.target as Node)) {
+        setIsFilterOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleSetView = (view: "base" | "dia") => {
+    if (view === "base") {
+      setSearchParams({});
+    } else {
+      setSearchParams({ view: "dia" });
+    }
+  };
 
   // Helper to check if PDV has a scheduled event today
   const getTodayEventForPDV = (pdvId: string) => {
@@ -33,6 +66,61 @@ export function ListaPDVs() {
     return key ? t(key as any) : str;
   };
 
+  // 1. Filter by search term and active tags
+  let filteredPdvs = pdvs.filter(pdv => {
+    // text search
+    let matchSearch = true;
+    if (searchTerm) {
+      const term = searchTerm.toLowerCase();
+      matchSearch = pdv.name.toLowerCase().includes(term) ||
+             pdv.sapId.includes(term) ||
+             pdv.badges.some(b => translateMockString(b).toLowerCase().includes(term)) ||
+             translateMockString(pdv.mainBadge.text).toLowerCase().includes(term);
+    }
+
+    // specific checkbox filters
+    let matchFilters = true;
+    if (activeFilters.agendamento_hoje) {
+      const hasEventToday = !!getTodayEventForPDV(pdv.id);
+      if (!hasEventToday) matchFilters = false;
+    }
+    if (activeFilters.share_critico) {
+      if (pdv.mainBadge.text !== "SHARE CRÍTICO") matchFilters = false;
+    }
+    if (activeFilters.boost_plan) {
+      if (!pdv.badges.includes("BOOST PLAN EM ABERTO")) matchFilters = false;
+    }
+    if (activeFilters.potencial_upsell) {
+      // Allow if badge matches or main_badge matches
+      const hasUpsell = pdv.badges.includes("POTENCIAL DE UPSELL") || pdv.mainBadge.text === "POTENCIAL DE UPSELL";
+      if (!hasUpsell) matchFilters = false;
+    }
+
+    return matchSearch && matchFilters;
+  });
+
+  // 2. Filter by view (PDVs do Dia = slice first 20 just for simulation)
+  if (currentView === "dia") {
+    filteredPdvs = filteredPdvs.slice(0, 20);
+  }
+
+  // Calculate metrics based on view
+  const metrics = currentView === "dia" ? {
+      planned: 20,
+      realized: 18,
+      percent: "90%",
+      gap: 2,
+      blockedValue: "R$ 4.5k",
+      fmc: "95%"
+  } : {
+      planned: 124,
+      realized: 18,
+      percent: "14.5%",
+      gap: 106,
+      blockedValue: "R$ 45.2k",
+      fmc: "84%"
+  };
+
   return (
     <>
       {/* Search & Filter Section */}
@@ -51,18 +139,61 @@ export function ListaPDVs() {
                   className="w-full pl-12 pr-4 py-3.5 bg-surface-container-lowest rounded-xl border-none shadow-[0_2px_12px_rgba(0,0,0,0.03)] border-2 border-transparent focus:border-primary/20 focus:ring-0 transition-all placeholder:text-outline/60 text-lg"
                   placeholder={t('pdvs_search_ph')}
                   type="text"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </div>
-              <button className="flex items-center gap-2 px-5 py-3.5 bg-surface-container-lowest text-on-surface-variant font-bold rounded-xl shadow-[0_2px_12px_rgba(0,0,0,0.03)] border border-surface-container-high hover:bg-surface-container transition-all">
-                <span className="material-symbols-outlined text-lg">filter_list</span>
-                {t('pdvs_filter')}
-              </button>
+              <div className="relative" ref={filterRef}>
+                <button 
+                  onClick={() => setIsFilterOpen(!isFilterOpen)}
+                  className={`flex items-center gap-2 px-5 py-3.5 bg-surface-container-lowest font-bold rounded-xl shadow-[0_2px_12px_rgba(0,0,0,0.03)] border transition-all ${isFilterOpen || Object.values(activeFilters).some(v => v) ? 'border-primary text-primary' : 'border-surface-container-high text-on-surface-variant hover:bg-surface-container'}`}
+                >
+                  <span className="material-symbols-outlined text-lg">filter_list</span>
+                  {t('pdvs_filter')}
+                  {Object.values(activeFilters).filter(v => v).length > 0 && (
+                    <span className="bg-primary text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full ml-1">
+                      {Object.values(activeFilters).filter(v => v).length}
+                    </span>
+                  )}
+                </button>
+                
+                {isFilterOpen && (
+                  <div className="absolute right-0 md:left-0 top-[110%] w-64 bg-white rounded-xl shadow-xl border border-surface-container-highest p-4 z-50">
+                     <h4 className="text-xs font-bold text-outline-variant uppercase mb-3">Filtrar por Tags</h4>
+                     <label className="flex items-center gap-3 p-1.5 cursor-pointer hover:bg-surface-container-low rounded-lg transition-colors group">
+                       <input type="checkbox" checked={activeFilters.agendamento_hoje} onChange={() => setActiveFilters(prev => ({...prev, agendamento_hoje: !prev.agendamento_hoje}))} className="w-4 h-4 rounded text-primary focus:ring-primary cursor-pointer border-outline-variant" />
+                       <span className="text-sm font-semibold text-on-surface-variant group-hover:text-primary">Com agendamento hoje</span>
+                     </label>
+                     <label className="flex items-center gap-3 p-1.5 cursor-pointer hover:bg-surface-container-low rounded-lg transition-colors group">
+                       <input type="checkbox" checked={activeFilters.share_critico} onChange={() => setActiveFilters(prev => ({...prev, share_critico: !prev.share_critico}))} className="w-4 h-4 rounded text-primary focus:ring-primary cursor-pointer border-outline-variant" />
+                       <span className="text-sm font-semibold text-on-surface-variant group-hover:text-primary">Share Crítico</span>
+                     </label>
+                     <label className="flex items-center gap-3 p-1.5 cursor-pointer hover:bg-surface-container-low rounded-lg transition-colors group">
+                       <input type="checkbox" checked={activeFilters.boost_plan} onChange={() => setActiveFilters(prev => ({...prev, boost_plan: !prev.boost_plan}))} className="w-4 h-4 rounded text-primary focus:ring-primary cursor-pointer border-outline-variant" />
+                       <span className="text-sm font-semibold text-on-surface-variant group-hover:text-primary">Boost Plan em aberto</span>
+                     </label>
+                     <label className="flex items-center gap-3 p-1.5 cursor-pointer hover:bg-surface-container-low rounded-lg transition-colors group">
+                       <input type="checkbox" checked={activeFilters.potencial_upsell} onChange={() => setActiveFilters(prev => ({...prev, potencial_upsell: !prev.potencial_upsell}))} className="w-4 h-4 rounded text-primary focus:ring-primary cursor-pointer border-outline-variant" />
+                       <span className="text-sm font-semibold text-on-surface-variant group-hover:text-primary">Potencial de Upsell</span>
+                     </label>
+                     {Object.values(activeFilters).some(v => v) && (
+                       <button onClick={() => setActiveFilters({agendamento_hoje: false, share_critico: false, boost_plan: false, potencial_upsell: false})} className="w-full mt-3 text-xs font-bold text-primary hover:bg-primary/5 py-2 rounded-lg transition-colors">
+                         Limpar Filtros
+                       </button>
+                     )}
+                  </div>
+                )}
+              </div>
             </div>
             <div className="bg-surface-container-high p-1.5 rounded-full flex gap-1 h-fit select-none">
-              <button className="px-6 py-2.5 rounded-full bg-surface-container-lowest text-primary font-bold shadow-sm transition-all">
+              <button 
+                onClick={() => handleSetView("dia")}
+                className={`px-6 py-2.5 rounded-full font-bold transition-all ${currentView === "dia" ? "bg-surface-container-lowest text-primary shadow-sm" : "text-on-surface-variant hover:bg-surface-container-low"}`}>
                 {t('pdvs_day_pdvs')}
               </button>
-              <button className="px-6 py-2.5 rounded-full text-on-surface-variant font-semibold hover:bg-surface-container-low transition-all">
+              <button 
+                onClick={() => handleSetView("base")}
+                className={`px-6 py-2.5 rounded-full font-bold transition-all ${currentView === "base" ? "bg-surface-container-lowest text-primary shadow-sm" : "text-on-surface-variant hover:bg-surface-container-low"}`}>
                 {t('pdvs_full_base')}
               </button>
             </div>
@@ -81,19 +212,19 @@ export function ListaPDVs() {
                   </span>
                   <div className="flex items-baseline gap-1">
                     <span className="text-3xl font-black font-headline text-primary">
-                      18
+                      {metrics.realized}
                     </span>
-                    <span className="text-lg font-bold text-outline">/ 124</span>
+                    <span className="text-lg font-bold text-outline">/ {metrics.planned}</span>
                   </div>
                 </div>
                 <span className="text-sm font-bold text-primary bg-primary/10 px-2 py-1 rounded-lg">
-                  14.5%
+                  {metrics.percent}
                 </span>
               </div>
               <div className="w-full h-3 bg-surface-container-highest rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-primary rounded-full shadow-[0_0_8px_rgba(0,88,188,0.4)]"
-                  style={{ width: "14.5%" }}
+                  className="h-full bg-primary rounded-full shadow-[0_0_8px_rgba(0,88,188,0.4)] transition-all duration-500"
+                  style={{ width: metrics.percent }}
                 ></div>
               </div>
             </div>
@@ -105,7 +236,7 @@ export function ListaPDVs() {
                   {t('pdvs_calls_gap')}
                 </span>
                 <div className="flex items-center gap-2 text-tertiary">
-                  <span className="text-2xl font-bold font-headline">106</span>
+                  <span className="text-2xl font-bold font-headline">{metrics.gap}</span>
                   <span className="material-symbols-outlined text-lg">
                     pending_actions
                   </span>
@@ -117,7 +248,7 @@ export function ListaPDVs() {
                 </span>
                 <div className="flex items-center gap-1 text-on-surface">
                   <span className="text-sm font-bold text-outline mt-1">R$</span>
-                  <span className="text-2xl font-bold font-headline">45.2k</span>
+                  <span className="text-2xl font-bold font-headline">{metrics.blockedValue.replace('R$ ', '')}</span>
                 </div>
               </div>
               <div className="flex flex-col">
@@ -125,7 +256,7 @@ export function ListaPDVs() {
                   {t('pdvs_fmc_volume')}
                 </span>
                 <div className="flex items-center gap-2 text-secondary">
-                  <span className="text-2xl font-bold font-headline">84%</span>
+                  <span className="text-2xl font-bold font-headline">{metrics.fmc}</span>
                   <span className="material-symbols-outlined text-lg">
                     trending_up
                   </span>
@@ -138,7 +269,7 @@ export function ListaPDVs() {
 
       {/* PDVs List Grid (Continuous Scroll) */}
       <div className="flex flex-col gap-4">
-        {pdvs.map((pdv) => {
+        {filteredPdvs.map((pdv) => {
           const todayEvent = getTodayEventForPDV(pdv.id);
 
           return (
@@ -216,7 +347,9 @@ export function ListaPDVs() {
                   ))}
 
                   <div className="h-8 w-px bg-outline-variant/30 mx-2 hidden lg:block"></div>
-                  <button className="flex items-center gap-2 bg-surface-container-high hover:bg-primary hover:text-white px-5 py-2.5 rounded-full font-bold text-sm transition-all active:scale-95 shadow-sm border border-surface-container-highest pb">
+                  <button 
+                    onClick={() => navigate(`/pdv/${pdv.id}`)}
+                    className="flex items-center gap-2 bg-surface-container-high hover:bg-primary hover:text-white px-5 py-2.5 rounded-full font-bold text-sm transition-all active:scale-95 shadow-sm border border-surface-container-highest pb">
                     <span className="material-symbols-outlined text-lg">
                       visibility
                     </span>

@@ -97,7 +97,34 @@ export const initialPdvs: PDV[] = [
     statusBg: "bg-surface-container",
     mainBadge: { text: "SEM PENDÊNCIAS", icon: "", bg: "bg-surface-container-high", textCol: "text-on-surface-variant" },
     isPriority: false,
-  }
+  },
+  ...(() => {
+    const tobaccoNames = [
+      "Banca do João", "Conveniência Rota 66", "Tabacaria Central", 
+      "Posto Estrela do Sul", "Mercadinho São José", "Banca da Praça", 
+      "Conveniência 24 Horas", "Tabacaria Premium", "Banca do Parque", 
+      "Posto e Conveniência Avenida", "Supermercado Compre Bem", 
+      "Banca Central Executiva", "Empório dos Fumos", "Lojinha da Esquina", 
+      "Banca do Metrô", "Tabacaria e Café Ouro", "Conveniência Pit Stop", 
+      "Banca Jornal e Cia", "Posto Ipiranga Centro", "Banca do Terminal", 
+      "Mercado Novo Horizonte", "Tabacaria Charuto's", "Banca Copacabana", 
+      "Conveniência Express", "Banca Cultural"
+    ];
+    return Array.from({ length: 25 }, (_, i) => ({
+      id: `p_gen_${i}`,
+      name: tobaccoNames[i % tobaccoNames.length],
+      sapId: `000${10000 + i}`,
+      lastContact: "10/05/2024",
+      badges: i % 3 === 0 ? ["BOOST PLAN EM ABERTO"] : [],
+      statusIcon: i % 2 === 0 ? "store" : "trending_up",
+      statusColor: i % 2 === 0 ? "text-outline" : "text-primary",
+      statusBg: i % 2 === 0 ? "bg-surface-container" : "bg-primary/10",
+      mainBadge: i % 4 === 0 
+        ? { text: "SHARE CRÍTICO", icon: "warning", bg: "bg-tertiary-container", textCol: "text-white" }
+        : { text: "SEM PENDÊNCIAS", icon: "", bg: "bg-surface-container-high", textCol: "text-on-surface-variant" },
+      isPriority: i % 4 === 0,
+    }));
+  })()
 ];
 
 const initialEvents: CallEvent[] = [
