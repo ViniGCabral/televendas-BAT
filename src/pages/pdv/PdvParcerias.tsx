@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 export function PdvParcerias() {
   return (
     <div className="flex flex-col gap-6 animate-fade-in pb-12">
