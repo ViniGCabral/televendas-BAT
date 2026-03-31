@@ -1,7 +1,11 @@
+import { useState } from "react";
 import { useLanguage } from "../../context/LanguageContext";
 
 export function PdvFmc() {
   const { t } = useLanguage();
+  const [simulatorValue, setSimulatorValue] = useState(44);
+
+  const packagesGained = Math.floor((simulatorValue / 100) * 14);
 
   const shareData = [
     { month: 'Jan', value: 78 },
@@ -19,47 +23,47 @@ export function PdvFmc() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         
         {/* Efetividade - Progressive Layout */}
-        <div className="bg-white border border-surface-container-high rounded-3xl p-6 flex flex-col gap-4 relative overflow-hidden shadow-sm">
+        <div className="bg-white border border-surface-container-highest rounded-2xl p-5 flex flex-col gap-4 relative overflow-hidden shadow-sm hover:border-primary/20 transition-all group">
            <div className="flex justify-between items-start">
-             <span className="text-base font-bold text-on-surface">{t('pdv_vg_pillar_eff')}</span>
-             <span className="material-symbols-outlined text-green-500 text-3xl font-bold" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
+             <span className="text-sm font-black text-on-surface uppercase tracking-tight">{t('pdv_vg_pillar_eff')}</span>
+             <span className="material-symbols-outlined text-green-500 text-2xl font-bold group-hover:scale-110 transition-transform" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
            </div>
            
-           <div className="grid grid-cols-2 gap-2">
+           <div className="grid grid-cols-2 gap-1">
              <div>
-                <p className="text-[9px] font-bold text-outline tracking-wider uppercase mb-1">{t('pdv_pillar_realized')}</p>
-                <div className="text-3xl font-black text-on-surface font-headline leading-none">82%</div>
+                <p className="text-[8px] font-bold text-outline tracking-wider uppercase">{t('pdv_pillar_realized')}</p>
+                <div className="text-2xl font-black text-on-surface font-headline leading-none">5.4</div>
              </div>
              <div className="text-right">
-                <p className="text-[9px] font-bold text-outline tracking-wider uppercase mb-1">{t('pdv_pillar_objective')}</p>
-                <div className="flex items-center justify-end gap-1.5">
-                   <span className="text-xs font-bold text-error leading-none">-18%</span>
-                   <span className="text-2xl font-black text-on-surface font-headline leading-none">100%</span>
+                <p className="text-[8px] font-bold text-outline tracking-wider uppercase">{t('pdv_pillar_objective')}</p>
+                <div className="flex items-center justify-end gap-1">
+                   <span className="text-[10px] font-bold text-error leading-none">-0.5</span>
+                   <span className="text-xl font-black text-on-surface font-headline leading-none">5.9</span>
                 </div>
              </div>
            </div>
 
-           <div className="space-y-1.5 mt-2">
-              <p className="text-xs font-black text-green-600 leading-none">82%</p>
-              <div className="w-full bg-surface-container-highest h-2 rounded-full overflow-hidden">
-                <div className="bg-green-500 h-full rounded-full" style={{ width: '82%' }}></div>
+           <div className="space-y-1">
+              <p className="text-[10px] font-black text-green-600 leading-none">91%</p>
+              <div className="w-full bg-surface-container-highest h-1.5 rounded-full overflow-hidden">
+                <div className="bg-green-500 h-full rounded-full" style={{ width: '91%' }}></div>
               </div>
            </div>
         </div>
 
-        {/* Produtividade - Binary Layout (Sincronizado: X) */}
-        <div className="bg-white border border-surface-container-high rounded-3xl p-6 flex flex-col gap-2 relative overflow-hidden shadow-sm items-center justify-center min-h-[160px]">
-           <div className="absolute top-6 left-6 right-6 flex justify-between items-start">
-             <span className="text-base font-bold text-on-surface">{t('pdv_vg_pillar_prod')}</span>
-             <span className="material-symbols-outlined text-error text-3xl font-bold" style={{ fontVariationSettings: "'FILL' 1" }}>cancel</span>
+        {/* Produtividade */}
+        <div className="bg-white border border-surface-container-highest rounded-2xl p-5 flex flex-col items-center justify-center min-h-[120px] text-center shadow-sm hover:border-error/20 transition-all group">
+           <div className="flex w-full justify-between items-center">
+             <span className="text-sm font-black text-on-surface uppercase tracking-tight">{t('pdv_vg_pillar_prod')}</span>
+             <span className="material-symbols-outlined text-error text-[28px] font-bold group-hover:scale-110 transition-transform" style={{ fontVariationSettings: "'FILL' 1" }}>cancel</span>
            </div>
         </div>
 
-        {/* Varejo Líquido - Binary Layout (Sincronizado: X) */}
-        <div className="bg-white border border-surface-container-high rounded-3xl p-6 flex flex-col gap-2 relative overflow-hidden shadow-sm items-center justify-center min-h-[160px]">
-           <div className="absolute top-6 left-6 right-6 flex justify-between items-start">
-             <span className="text-base font-bold text-on-surface">{t('pdv_vg_pillar_net')}</span>
-             <span className="material-symbols-outlined text-error text-3xl font-bold" style={{ fontVariationSettings: "'FILL' 1" }}>cancel</span>
+        {/* Varejo Líquido */}
+        <div className="bg-white border border-surface-container-highest rounded-2xl p-5 flex flex-col items-center justify-center min-h-[120px] text-center shadow-sm hover:border-error/20 transition-all group">
+           <div className="flex w-full justify-between items-center">
+             <span className="text-sm font-black text-on-surface uppercase tracking-tight">{t('pdv_vg_pillar_net')}</span>
+             <span className="material-symbols-outlined text-error text-[28px] font-bold group-hover:scale-110 transition-transform" style={{ fontVariationSettings: "'FILL' 1" }}>cancel</span>
            </div>
         </div>
 
@@ -129,67 +133,142 @@ export function PdvFmc() {
          </div>
       </div>
 
-      {/* Active Campaigns Section */}
+      {/* ACTIVE CAMPANHAS SECTION - REDIRECTED FROM PARCERIAS */}
       <div className="flex flex-col gap-6">
         <h3 className="text-sm font-bold text-outline tracking-widest uppercase">{t('pdv_fmc_campaigns_title')}</h3>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-           {/* Campaign 1: Promoção */}
-           <div className="bg-primary border border-primary-dark rounded-2xl overflow-hidden shadow-sm flex flex-col text-white relative">
-              <div className="absolute right-0 top-0 opacity-10 mix-blend-overlay w-32 h-32 rotate-12 -mt-4 -mr-4">
-                <span className="material-symbols-outlined text-[150px]">rocket_launch</span>
-              </div>
-              <div className="p-6 pb-8 flex-1 relative z-10">
-                 <span className="text-[9px] font-bold tracking-widest uppercase text-white/70">{t('pdv_fmc_promo')}</span>
-                 <h4 className="font-bold font-headline text-xl leading-tight mt-1">{t('pdv_fmc_campaign_1')}</h4>
-              </div>
-              <div className="bg-white p-5 flex flex-col gap-4 relative z-10">
-                 <div className="flex justify-between items-center text-xs font-bold text-on-surface-variant">
-                   <span>{t('pdv_fmc_campaign_1_desc')}</span>
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+           
+           {/* Conecta Prime Card */}
+           <div className="bg-[#2d1b94] border border-[#3d2ba4] rounded-[32px] p-8 shadow-lg text-white flex flex-col gap-6 relative overflow-hidden min-h-[380px]">
+              <div className="flex justify-between items-start">
+                 <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center">
+                       <span className="material-symbols-outlined text-white text-2xl">hub</span>
+                    </div>
+                    <div>
+                       <h3 className="text-xl font-black font-headline">Conecta Prime</h3>
+                       <span className="text-[8px] font-bold text-white/50 tracking-[0.2em] uppercase">Aceleração Ativa</span>
+                    </div>
                  </div>
-                 <button className="w-full py-2.5 border border-surface-container-highest rounded-xl text-primary font-bold text-sm hover:bg-surface-container-low transition-colors">
-                   {t('pdv_fmc_view_details')}
-                 </button>
+                 <div className="bg-white/10 border border-white/10 rounded-xl px-3 py-1.5 flex items-center gap-2">
+                    <span className="text-xs font-bold">Abril / 25</span>
+                    <span className="material-symbols-outlined text-xs">expand_more</span>
+                 </div>
+              </div>
+
+              <div className="flex flex-col gap-1">
+                 <h4 className="text-lg font-black font-headline">Cliente Prime ganha mais!</h4>
+                 <p className="text-sm text-white/70">Este varejo já comprou <span className="text-[#3edfff] font-black">78 pacotes</span></p>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                 <div className="w-full bg-white/10 h-6 rounded-full relative overflow-hidden p-1 border border-white/5">
+                    <div className="h-full bg-gradient-to-r from-[#00f2fe] to-[#3edfff] rounded-full flex items-center justify-center transition-all duration-700" 
+                         style={{ width: '44%' }}>
+                       <span className="text-[10px] font-black text-indigo-900">44%</span>
+                    </div>
+                 </div>
+                 <div className="flex justify-end gap-6 text-[8px] font-black text-white/40 tracking-widest uppercase pr-2">
+                    <span>176 UN</span>
+                    <span>229 UN</span>
+                 </div>
+              </div>
+
+              <div className="bg-white/5 border border-white/5 rounded-2xl p-6 flex flex-col gap-6 mt-auto">
+                 <div className="flex justify-between items-end">
+                    <span className="text-[9px] font-black text-white/50 tracking-widest uppercase">GANHEI!</span>
+                    <div className="flex gap-8 text-lg font-black font-headline pr-2">
+                       <span className={packagesGained > 0 ? "text-[#3edfff]" : "text-white/20"}>{packagesGained}</span>
+                       <span className="text-white/20">14</span>
+                    </div>
+                 </div>
+                 <div className="relative flex items-center">
+                    <input 
+                        type="range" min="0" max="100" value={simulatorValue}
+                        onChange={(e) => setSimulatorValue(parseInt(e.target.value))}
+                        className="w-full h-1 bg-white/10 rounded-full appearance-none cursor-pointer accent-[#3edfff]"
+                    />
+                 </div>
+                 <div className="flex justify-between items-center text-[9px] font-bold italic text-white/50 uppercase tracking-widest">
+                    <span>Simule Agora!</span>
+                    <span>Ao atingir {simulatorValue}% ganhe {packagesGained} pacote</span>
+                 </div>
               </div>
            </div>
 
-           {/* Campaign 2: Incentivo */}
-           <div className="bg-[#608b04] border border-[#486b02] rounded-2xl overflow-hidden shadow-sm flex flex-col text-white relative">
-              <div className="absolute right-0 bottom-32 opacity-20 w-32 h-32 flex items-center justify-center -mr-16">
-                <span className="material-symbols-outlined text-[120px]">stars</span>
-              </div>
-              <div className="p-6 pb-8 flex-1 relative z-10">
-                 <span className="text-[9px] font-bold tracking-widest uppercase text-white/70">{t('pdv_fmc_incentive')}</span>
-                 <h4 className="font-bold font-headline text-xl leading-tight mt-1">{t('pdv_fmc_campaign_2')}</h4>
-              </div>
-              <div className="bg-white p-5 flex flex-col gap-4 relative z-10">
-                 <div className="flex justify-between items-center text-xs font-bold text-on-surface-variant">
-                   <span>{t('pdv_fmc_campaign_2_desc')}</span>
+           {/* Conecta Você Card */}
+           <div className="bg-[#1a5b22] border border-[#2a6b32] rounded-[32px] p-8 shadow-lg text-white flex flex-col gap-6 relative overflow-hidden min-h-[380px]">
+              <div className="flex justify-between items-start">
+                 <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center">
+                       <span className="material-symbols-outlined text-white text-2xl">groups</span>
+                    </div>
+                    <div>
+                       <h3 className="text-xl font-black font-headline">Conecta Você</h3>
+                       <span className="text-[8px] font-bold text-white/50 tracking-[0.2em] uppercase">Meta de Unidade</span>
+                    </div>
                  </div>
-                 <button className="w-full py-2.5 border border-surface-container-highest rounded-xl text-primary font-bold text-sm hover:bg-surface-container-low transition-colors">
-                   {t('pdv_fmc_view_details')}
+              </div>
+
+              <div className="flex flex-col gap-1">
+                 <h4 className="text-lg font-black font-headline leading-tight">Equipe unida ganha mais!</h4>
+                 <p className="text-sm text-white/70">Unidade atingiu <span className="text-[#b7ff42] font-black">85% da meta</span></p>
+              </div>
+
+              <div className="w-full bg-white/10 h-6 rounded-full relative overflow-hidden p-1 border border-white/5 mt-4">
+                 <div className="h-full bg-[#d0ff7a] rounded-full flex items-center justify-center transition-all duration-700" style={{ width: '85%' }}>
+                    <span className="text-[10px] font-black text-[#1a5b22]">85%</span>
+                 </div>
+              </div>
+
+              <div className="flex items-end justify-between mt-auto">
+                 <button className="bg-[#d0ff7a] text-[#1a5b22] px-8 py-4 rounded-xl text-xs font-black uppercase tracking-widest hover:brightness-110 transition-all shadow-md">
+                    STAFF
                  </button>
+                 <div className="text-right">
+                    <div className="text-[9px] font-black text-white/30 tracking-widest uppercase mb-1">Prêmio Final</div>
+                    <span className="text-3xl font-black font-headline text-[#d0ff7a]">R$ 300,00</span>
+                 </div>
               </div>
            </div>
 
-           {/* Campaign 3: Vendas */}
-           <div className="bg-orange-600 border border-orange-700 rounded-2xl overflow-hidden shadow-sm flex flex-col text-white relative">
-              <div className="absolute right-0 bottom-32 opacity-20 w-32 h-32 flex items-center justify-center rotate-45 -mr-12 opacity-30">
-                <span className="material-symbols-outlined text-[120px]">sell</span>
-              </div>
-              <div className="p-6 pb-8 flex-1 relative z-10">
-                 <span className="text-[9px] font-bold tracking-widest uppercase text-white/70">{t('pdv_fmc_sales')}</span>
-                 <h4 className="font-bold font-headline text-xl leading-tight mt-1">{t('pdv_fmc_campaign_3')}</h4>
-              </div>
-              <div className="bg-white p-5 flex flex-col gap-4 relative z-10">
-                 <div className="flex justify-between items-center text-xs font-bold text-on-surface-variant">
-                   <span>{t('pdv_fmc_campaign_3_desc')}</span>
+           {/* Rewards & Boost Row */}
+           <div className="xl:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Ganhos Acumulados */}
+              <div className="bg-gradient-to-r from-[#442ba0] to-[#5a3cd1] rounded-3xl p-6 shadow-lg text-white flex items-center justify-between border border-white/5 min-h-[120px]">
+                 <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center">
+                       <span className="material-symbols-outlined text-white text-2xl">card_giftcard</span>
+                    </div>
+                    <div>
+                       <p className="text-[10px] font-medium text-white/80 max-w-[140px] leading-tight">
+                           Ganhos acumulados desde <span className="text-white font-black">MARÇO / 25</span>
+                       </p>
+                    </div>
                  </div>
-                 <button className="w-full py-2.5 border border-surface-container-highest rounded-xl text-primary font-bold text-sm hover:bg-surface-container-low transition-colors">
-                   {t('pdv_fmc_view_details')}
-                 </button>
+                 <div className="text-right">
+                    <span className="text-2xl font-black font-headline text-[#fff64d] block">R$ 1.050,00</span>
+                    <span className="text-[8px] font-black tracking-widest text-white/50 uppercase">Bonificação</span>
+                 </div>
+              </div>
+
+              {/* Boost Plan */}
+              <div className="bg-[#3b9ff5] border border-blue-400 rounded-3xl p-6 shadow-sm flex items-center gap-6 text-white overflow-hidden relative min-h-[120px]">
+                 <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center shrink-0">
+                    <span className="material-symbols-outlined text-white text-2xl">rocket_launch</span>
+                 </div>
+                 <div className="flex flex-col flex-1">
+                    <div className="flex justify-between items-baseline mb-1">
+                       <h2 className="text-lg font-black font-headline">Boost Plan</h2>
+                       <span className="bg-white text-[#3b9ff5] text-[8px] font-black px-2 py-1 rounded-lg uppercase tracking-widest">ATIVO</span>
+                    </div>
+                    <p className="text-[10px] font-medium text-white/80 line-clamp-1">Programa exclusivo para metas trimestrais.</p>
+                    <span className="text-[9px] font-bold text-white/60 italic mt-1">12 dias restantes</span>
+                 </div>
               </div>
            </div>
+
         </div>
       </div>
 

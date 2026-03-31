@@ -9,12 +9,14 @@ import { PdvLayout } from "./pages/pdv/PdvLayout";
 import { PdvVisaoGeral } from "./pages/pdv/PdvVisaoGeral";
 import { PdvFmc } from "./pages/pdv/PdvFmc";
 import { PdvParcerias } from "./pages/pdv/PdvParcerias";
+import { ScrollToTop } from "./components/ScrollToTop";
 
 function App() {
   return (
     <LanguageProvider>
       <AppProvider>
         <Router>
+          <ScrollToTop />
           <Routes>
             <Route path="/" element={<Layout />}>
               <Route index element={<Dashboard />} />

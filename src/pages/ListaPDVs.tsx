@@ -105,20 +105,14 @@ export function ListaPDVs() {
   }
 
   // Calculate metrics based on view
-  const metrics = currentView === "dia" ? {
-      planned: 20,
-      realized: 18,
-      percent: "90%",
-      gap: 2,
-      blockedValue: "R$ 4.5k",
-      fmc: "95%"
+  const summaryMetrics = currentView === "dia" ? {
+      gapProd: -5,
+      gapPcts: -216,
+      gapPos: -8
   } : {
-      planned: 124,
-      realized: 18,
-      percent: "14.5%",
-      gap: 106,
-      blockedValue: "R$ 45.2k",
-      fmc: "84%"
+      gapProd: -31,
+      gapPcts: -1420,
+      gapPos: -92
   };
 
   return (
@@ -200,68 +194,58 @@ export function ListaPDVs() {
           </div>
         </div>
 
-        {/* Unified Summary Card */}
-        <div className="bg-surface-container-lowest p-6 rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.03)] border border-surface-container-highest mb-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            {/* Progress Bar Section */}
-            <div className="lg:col-span-5 border-r border-surface-container-high pr-8">
-              <div className="flex justify-between items-end mb-3">
-                <div>
-                  <span className="block text-[10px] font-bold text-outline uppercase tracking-wider mb-1">
-                    {t('pdvs_calls_vs_planned')}
-                  </span>
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-3xl font-black font-headline text-primary">
-                      {metrics.realized}
-                    </span>
-                    <span className="text-lg font-bold text-outline">/ {metrics.planned}</span>
-                  </div>
-                </div>
-                <span className="text-sm font-bold text-primary bg-primary/10 px-2 py-1 rounded-lg">
-                  {metrics.percent}
+        {/* Minha Rota Summary Section */}
+        <div className="mb-10">
+          <h2 className="text-2xl font-black font-headline text-on-surface mb-6">
+            Minha Rota
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Gap Ligações Produtivas */}
+            <div className="bg-surface-container-lowest p-8 rounded-3xl shadow-[0_2px_12px_rgba(0,0,0,0.03)] border border-surface-container-highest flex flex-col items-center justify-center text-center relative overflow-hidden group hover:border-primary/20 transition-all">
+              <div className="w-12 h-12 bg-error/5 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                <span className="material-symbols-outlined text-error text-3xl font-variation-fill">
+                  location_on
                 </span>
               </div>
-              <div className="w-full h-3 bg-surface-container-highest rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-primary rounded-full shadow-[0_0_8px_rgba(0,88,188,0.4)] transition-all duration-500"
-                  style={{ width: metrics.percent }}
-                ></div>
-              </div>
+              <span className="text-4xl font-black font-headline text-on-surface mb-1">
+                {summaryMetrics.gapProd}
+              </span>
+              <span className="text-[10px] font-black text-outline uppercase tracking-widest leading-tight">
+                {t('pdvs_gap_productive_calls')}
+              </span>
+              <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-error/40 group-hover:bg-error transition-all"></div>
             </div>
 
-            {/* Metrics Grid Section */}
-            <div className="lg:col-span-7 grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="flex flex-col">
-                <span className="text-[10px] font-bold text-outline uppercase tracking-wider mb-1">
-                  {t('pdvs_calls_gap')}
+            {/* Gap PCTs Efetividade */}
+            <div className="bg-surface-container-lowest p-8 rounded-3xl shadow-[0_2px_12px_rgba(0,0,0,0.03)] border border-surface-container-highest flex flex-col items-center justify-center text-center relative overflow-hidden group hover:border-primary/20 transition-all">
+              <div className="w-12 h-12 bg-error/5 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                <span className="material-symbols-outlined text-error text-3xl font-variation-fill">
+                  payments
                 </span>
-                <div className="flex items-center gap-2 text-tertiary">
-                  <span className="text-2xl font-bold font-headline">{metrics.gap}</span>
-                  <span className="material-symbols-outlined text-lg">
-                    pending_actions
-                  </span>
-                </div>
               </div>
-              <div className="flex flex-col">
-                <span className="text-[10px] font-bold text-outline uppercase tracking-wider mb-1">
-                  {t('pdvs_blocked_value')}
+              <span className="text-4xl font-black font-headline text-on-surface mb-1">
+                {summaryMetrics.gapPcts}
+              </span>
+              <span className="text-[10px] font-black text-outline uppercase tracking-widest leading-tight">
+                {t('pdvs_gap_pcts_effectiveness')}
+              </span>
+              <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-error/40 group-hover:bg-error transition-all"></div>
+            </div>
+
+            {/* Gap Pos. Parcerias */}
+            <div className="bg-surface-container-lowest p-8 rounded-3xl shadow-[0_2px_12px_rgba(0,0,0,0.03)] border border-surface-container-highest flex flex-col items-center justify-center text-center relative overflow-hidden group hover:border-primary/20 transition-all">
+              <div className="w-12 h-12 bg-error/5 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                <span className="material-symbols-outlined text-error text-3xl font-variation-fill">
+                  package_2
                 </span>
-                <div className="flex items-center gap-1 text-on-surface">
-                  <span className="text-sm font-bold text-outline mt-1">R$</span>
-                  <span className="text-2xl font-bold font-headline">{metrics.blockedValue.replace('R$ ', '')}</span>
-                </div>
               </div>
-              <div className="flex flex-col">
-                <span className="text-[10px] font-bold text-outline uppercase tracking-wider mb-1">
-                  {t('pdvs_fmc_volume')}
-                </span>
-                <div className="flex items-center gap-2 text-secondary">
-                  <span className="text-2xl font-bold font-headline">{metrics.fmc}</span>
-                  <span className="material-symbols-outlined text-lg">
-                    trending_up
-                  </span>
-                </div>
-              </div>
+              <span className="text-4xl font-black font-headline text-on-surface mb-1">
+                {summaryMetrics.gapPos}
+              </span>
+              <span className="text-[10px] font-black text-outline uppercase tracking-widest leading-tight text-center max-w-[120px]">
+                {t('pdvs_gap_pos_partners')}
+              </span>
+              <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-error/40 group-hover:bg-error transition-all"></div>
             </div>
           </div>
         </div>

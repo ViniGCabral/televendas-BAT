@@ -10,152 +10,113 @@ export function PdvSidebar() {
   const { t } = useLanguage();
 
   const pdv = pdvs.find((p) => p.id === id) || pdvs[0];
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [visitStatus, setVisitStatus] = useState<"idle" | "in_progress">("idle");
+
   return (
-    <aside className="w-[360px] bg-white dark:bg-slate-900 border-r border-surface-container-high dark:border-slate-800 transition-all duration-300 ease-in-out flex flex-col shrink-0 h-full overflow-y-auto">
-      {/* Cabeçalho da Sidebar */}
-      <div className="h-16 flex items-center justify-start px-4 shrink-0 border-b border-surface-container-high dark:border-slate-800 gap-3 mb-6 relative overflow-hidden">
+    <aside className="w-[340px] bg-slate-50 border-r border-slate-200/60 shadow-[4px_0_24px_rgba(0,0,0,0.02)] transition-all duration-300 ease-in-out flex flex-col shrink-0 h-full overflow-y-auto z-20">
+      
+      {/* Header with better balanced logo */}
+      <div className="h-24 flex items-center justify-start px-6 shrink-0 border-b border-slate-200/40 gap-4 mb-6 bg-white sticky top-0 z-30">
         <button 
           onClick={() => navigate('/pdvs')}
-          className="p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors flex items-center justify-center shrink-0"
+          className="p-2 text-slate-400 hover:text-primary hover:bg-primary/5 rounded-xl transition-all flex items-center justify-center shrink-0"
           title={t('pdv_header_back')}
         >
-          <span className="material-symbols-outlined">arrow_back</span>
+          <span className="material-symbols-outlined text-[24px]">arrow_back</span>
         </button>
-        <div className="flex-1 flex items-center justify-start h-full py-1 -ml-2 overflow-hidden">
+        <div className="flex-1 flex items-center justify-start py-1 overflow-hidden pointer-events-none">
            <img 
              src="/logo.png" 
              alt="BAT Telesales" 
-             className="h-full w-auto object-contain transform scale-[1.5] origin-left mix-blend-multiply" 
+             className="h-14 w-auto object-contain" 
            />
         </div>
       </div>
 
-      <div className="px-6 flex flex-col gap-4">
-        {/* PDV Card Component in Sidebar */}
-        <div className="bg-surface-container-lowest border border-surface-container-highest rounded-2xl p-4 shadow-sm flex flex-col gap-3 relative">
-          <div className="flex gap-3 items-start">
-             <div className="w-12 h-12 rounded-xl bg-primary text-white flex items-center justify-center font-bold text-xl shrink-0">
-               <span className="material-symbols-outlined">storefront</span>
+      <div className="px-6 flex flex-col gap-6">
+        {/* PDV Profile Card - Balanced Scale */}
+        <div className="bg-white border border-slate-200/60 rounded-[32px] p-6 shadow-sm flex flex-col gap-5 relative hover:shadow-md transition-shadow group">
+          <div className="flex gap-4 items-start">
+             <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center font-bold shrink-0 group-hover:scale-105 transition-transform duration-500 shadow-inner">
+               <span className="material-symbols-outlined text-[28px]">storefront</span>
              </div>
-             <div>
-                <h3 className="font-bold text-on-surface leading-tight text-sm">{pdv?.name || "Cliente Não Encontrado"}</h3>
-                <div className="flex items-center gap-1 mt-1.5 flex-wrap">
-                  <span className="text-[10px] text-outline font-medium">SAP: {pdv?.sapId}</span>
-                  <button onClick={() => navigator.clipboard.writeText(pdv?.sapId || '')} className="text-outline hover:text-primary transition-colors flex items-center justify-center p-1 rounded hover:bg-surface-container" title="Copiar SAP">
-                    <span className="material-symbols-outlined text-[12px]">content_copy</span>
-                  </button>
-                  <span className="text-[10px] text-outline font-medium mx-1">•</span>
-                  <span className="text-[10px] text-outline font-medium">CNPJ: 12.345/0001-99</span>
-                  <button onClick={() => navigator.clipboard.writeText('12.345/0001-99')} className="text-outline hover:text-primary transition-colors flex items-center justify-center p-1 rounded hover:bg-surface-container" title="Copiar CNPJ">
-                    <span className="material-symbols-outlined text-[12px]">content_copy</span>
-                  </button>
+             <div className="min-w-0 flex-1">
+                <h3 className="font-black text-slate-800 leading-tight text-base mb-2 tracking-tight group-hover:text-primary transition-colors truncate" title={pdv?.name}>
+                  {pdv?.name || "Cliente Não Encontrado"}
+                </h3>
+                <div className="flex flex-col gap-1">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest truncate">SAP: {pdv?.sapId}</span>
+                    <button onClick={() => navigator.clipboard.writeText(pdv?.sapId || '')} className="text-slate-300 hover:text-primary transition-colors p-1 rounded-lg">
+                      <span className="material-symbols-outlined text-[14px]">content_copy</span>
+                    </button>
+                  </div>
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest truncate">CNPJ: 12.345.678/0...</span>
+                    <button onClick={() => navigator.clipboard.writeText('12.345.678/0001-99')} className="text-slate-300 hover:text-primary transition-colors p-1 rounded-lg">
+                      <span className="material-symbols-outlined text-[14px]">content_copy</span>
+                    </button>
+                  </div>
                 </div>
              </div>
           </div>
           
-          <div className="flex gap-2 text-[9px] font-bold mt-1">
-             <span className="bg-primary/10 text-primary px-2 py-0.5 rounded-full uppercase tracking-widest">B2B</span>
-             <span className="bg-secondary/15 text-secondary px-2 py-0.5 rounded-full uppercase tracking-widest">ADIMPLENTE</span>
-             <span className="bg-green-100 text-green-700 px-2 py-0.5 rounded-full uppercase tracking-widest">ATIVO</span>
+          <div className="flex flex-wrap gap-2">
+             <span className="bg-primary text-white px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-[0.1em] shadow-sm">PRIME</span>
+             <span className="bg-slate-100 text-slate-500 px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-[0.1em] border border-slate-200/50">ADIMPLENTE</span>
+             <span className="bg-green-50 text-green-600 px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-[0.1em] border border-green-100">ATIVO</span>
           </div>
 
+          <div className="h-[1px] w-full bg-slate-100/80"></div>
+
           {visitStatus === "idle" ? (
-            <button onClick={() => setIsModalOpen(true)} className="mt-2 w-full bg-secondary text-white py-3 rounded-xl font-bold text-sm shadow-md hover:shadow-lg hover:bg-secondary-dark transition-all flex items-center justify-center gap-2 animate-fade-in">
-               <span className="material-symbols-outlined text-lg font-bold">play_arrow</span>
+            <button onClick={() => setVisitStatus("in_progress")} className="w-full bg-[#486b02] hover:bg-[#5a8503] text-[#ccff66] py-3.5 rounded-[20px] font-black text-sm shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 uppercase tracking-widest active:scale-[0.98]">
+               <span className="material-symbols-outlined text-[20px]">play_circle</span>
                {t('pdv_btn_start_service')}
             </button>
           ) : (
-             <div className="mt-2 flex flex-col gap-2 animate-fade-in">
-                <div className="bg-green-100 text-green-800 border border-green-200 py-2 px-3 rounded-xl flex justify-center items-center gap-1.5 shadow-sm">
-                   <span className="material-symbols-outlined text-[16px] animate-pulse">sensors</span>
-                   <span className="text-xs font-black uppercase tracking-widest">Em Andamento</span>
+             <div className="flex flex-col gap-3 animate-fade-in">
+                <div className="bg-green-50 text-green-700 border border-green-100 py-3 px-4 rounded-xl flex justify-center items-center gap-2">
+                   <span className="material-symbols-outlined text-[18px] animate-pulse font-bold">online_prediction</span>
+                   <span className="text-[10px] font-black uppercase tracking-widest">Atendimento Ativo</span>
                 </div>
-                <button onClick={() => setVisitStatus("idle")} className="w-full bg-error text-white py-3 rounded-xl font-bold text-sm shadow-md hover:shadow-lg hover:brightness-110 transition-all flex items-center justify-center gap-2">
-                   <span className="material-symbols-outlined text-lg">stop_circle</span>
+                <button onClick={() => setVisitStatus("idle")} className="w-full bg-red-50 text-red-600 border border-red-100 py-3 rounded-xl font-black text-[10px] hover:bg-red-100 transition-all flex items-center justify-center gap-2 uppercase tracking-widest">
+                   <span className="material-symbols-outlined text-[18px]">stop_circle</span>
                    Encerrar Visita
                 </button>
              </div>
           )}
         </div>
 
-        {/* Action Grid */}
-        <div className="grid grid-cols-3 gap-2 mt-2 border-b border-surface-container-high pb-8">
+        {/* Action Grid - Adjusted spacing */}
+        <div className="grid grid-cols-2 gap-3 pb-8 mt-2">
            {[
-             { id: 'pedido', icon: 'shopping_cart', label: t('pdv_action_order') },
-             { id: 'recompra', icon: 'history', label: t('pdv_action_repurchase') },
-             { id: 'conecta', icon: 'hub', label: t('pdv_action_conecta') },
-             { id: 'finan', icon: 'account_balance_wallet', label: t('pdv_action_finan') },
-             { id: 'falta', icon: 'error', label: t('pdv_action_missing') },
-             { id: 'sugestao', icon: 'lightbulb', label: t('pdv_action_suggestion') }
+             { id: 'pedido', icon: 'shopping_cart', label: t('pdv_action_order'), color: 'text-primary bg-primary/5' },
+             { id: 'recompra', icon: 'history', label: t('pdv_action_repurchase'), color: 'text-indigo-600 bg-indigo-50' },
+             { id: 'conecta', icon: 'hub', label: t('pdv_action_conecta'), color: 'text-purple-600 bg-purple-50' },
+             { id: 'finan', icon: 'account_balance_wallet', label: t('pdv_action_finan'), color: 'text-amber-600 bg-amber-50' },
+             { id: 'falta', icon: 'error', label: t('pdv_action_missing'), color: 'text-red-500 bg-red-50' },
+             { id: 'sugestao', icon: 'lightbulb', label: t('pdv_action_suggestion'), color: 'text-teal-600 bg-teal-50' }
            ].map(action => (
-             <button key={action.id} className="bg-white border text-outline border-surface-container-highest rounded-2xl py-3 flex flex-col items-center justify-center gap-1.5 hover:border-primary hover:text-primary transition-all shadow-sm hover:shadow-md cursor-pointer">
-                <span className="material-symbols-outlined text-[20px]">{action.icon}</span>
-                <span className="text-[9px] font-bold tracking-widest uppercase">{action.label}</span>
+             <button key={action.id} className="bg-white border border-slate-200/60 rounded-[24px] py-6 flex flex-col items-center justify-center gap-2 content-center hover:border-primary/40 hover:bg-slate-50 transition-all shadow-sm active:scale-95 group">
+                <div className={`w-10 h-10 rounded-xl ${action.color} flex items-center justify-center transition-all group-hover:scale-110 duration-300 shadow-inner`}>
+                   <span className="material-symbols-outlined text-[20px]">{action.icon}</span>
+                </div>
+                <span className="text-[9px] font-black tracking-widest uppercase text-slate-500 group-hover:text-primary transition-colors text-center px-1 leading-tight">{action.label}</span>
              </button>
            ))}
         </div>
       </div>
 
-      <div className="px-6 pb-8 mt-auto">
+      <div className="px-6 pb-10 mt-auto">
           <Link 
             to="/agenda" 
-            className="w-full bg-surface-container-high text-primary py-4 rounded-xl font-bold text-sm shadow-sm hover:shadow-md hover:bg-primary hover:text-white transition-all flex items-center justify-center gap-2 border border-primary/20"
+            className="w-full bg-white border border-slate-200/80 text-slate-600 py-4 rounded-[20px] font-black text-xs shadow-sm hover:shadow-md hover:border-primary/30 hover:text-primary transition-all flex items-center justify-center gap-2 uppercase tracking-[0.1em] active:scale-[0.98]"
           >
-             <span className="material-symbols-outlined text-lg">calendar_add_on</span>
+             <span className="material-symbols-outlined text-[20px]">calendar_today</span>
              {t('pdv_sidebar_btn_schedule')}
           </Link>
       </div>
-
-      {/* Confirmation Modal */}
-      {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-0">
-          <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setIsModalOpen(false)}></div>
-          <div className="bg-white rounded-[32px] p-8 max-w-sm w-full relative z-10 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
-             
-             <div className="text-center mb-6">
-                <h2 className="text-xl font-black font-headline text-on-surface mb-2 leading-tight">Confirme as atividades mandatórias</h2>
-                <p className="text-sm text-outline font-medium">Certifique-se de realizar as tarefas obrigatórias para este PDV antes de encerrar sua visita.</p>
-             </div>
-
-             <div className="flex flex-col gap-3 mb-8">
-                {[
-                  { id: 1, text: "Estimule Sell Out de 30 PCTs de Dunhill Red" },
-                  { id: 2, text: "Venda +40 PCTs via Prime" },
-                  { id: 3, text: "Ative PDV no Prime" },
-                  { id: 4, text: "Ative Staff no Conecta Você" }
-                ].map((act) => (
-                  <div key={act.id} className="bg-surface-container-lowest border border-surface-container-high rounded-xl p-4 flex items-center gap-4">
-                     <div className="w-6 h-6 rounded-full border border-primary/30 bg-primary/5 text-primary flex items-center justify-center text-xs font-bold shrink-0">
-                        {act.id}
-                     </div>
-                     <span className="text-sm font-semibold text-on-surface leading-tight">{act.text}</span>
-                  </div>
-                ))}
-             </div>
-
-             <div className="flex flex-col gap-3">
-                <button 
-                  onClick={() => {
-                    setIsModalOpen(false);
-                    setVisitStatus("in_progress");
-                  }} 
-                  className="w-full bg-[#00A84D] text-white py-4 rounded-2xl font-black text-sm shadow-md hover:brightness-110 active:scale-[0.98] transition-all uppercase tracking-widest"
-                >
-                  Iniciar Visita
-                </button>
-                <button 
-                  onClick={() => setIsModalOpen(false)} 
-                  className="w-full bg-surface-container-lowest text-on-surface-variant py-4 rounded-2xl font-bold text-sm hover:bg-surface-container hover:text-on-surface transition-colors"
-                >
-                  Voltar
-                </button>
-             </div>
-
-          </div>
-        </div>
-      )}
 
     </aside>
   );
