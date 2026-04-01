@@ -3,7 +3,7 @@ import { useAppContext } from "../context/AppContext";
 import { useLanguage } from "../context/LanguageContext";
 import type { CallEvent } from "../context/AppContext";
 
-const initialDate = new Date(2024, 10, 15); // Nov 15, 2024
+const initialDate = new Date(); // Today's date
 const hours = Array.from({ length: 11 }, (_, i) => i + 8); // 08:00 to 18:00
 
 export function Agenda() {
@@ -382,19 +382,22 @@ export function Agenda() {
                   return (
                     <div
                       key={day.getTime()}
-                      className={`flex-1 border-r border-surface-container-high p-3 text-center border-b-[3px] ${
-                        today ? "border-b-primary bg-primary/5" : "border-b-transparent"
+                      className={`flex-1 border-r border-surface-container-high p-3 text-center border-b-[3px] transition-colors ${
+                        today ? "border-b-primary bg-primary/[0.04]" : "border-b-transparent"
                       }`}
                     >
-                      <span className={`text-[10px] font-bold block mb-1 uppercase ${today ? "text-primary" : "text-outline"}`}>
+                      <span className={`text-[10px] font-black block mb-1 uppercase tracking-wider ${today ? "text-primary" : "text-outline"}`}>
                         {dayNames[day.getDay()]}
                       </span>
-                      <span className={`text-xl font-bold ${today ? "text-primary" : "text-on-surface"}`}>
-                        {day.getDate()}
-                      </span>
-                      {today && (
-                        <span className="text-[10px] bg-primary text-on-primary px-2 py-0.5 rounded-full absolute mt-1 -ml-4 font-bold hidden xl:inline-block">{t('btn_today').toUpperCase()}</span>
-                      )}
+                      <div className="flex justify-center">
+                        <span className={`text-xl font-bold w-10 h-10 flex items-center justify-center rounded-full transition-all ${
+                          today 
+                            ? "bg-primary text-on-primary shadow-sm scale-110" 
+                            : "text-on-surface hover:bg-surface-container"
+                        }`}>
+                          {day.getDate()}
+                        </span>
+                      </div>
                     </div>
                   );
                 })}
@@ -416,8 +419,8 @@ export function Agenda() {
                           <div
                             key={day.getTime()}
                             onClick={() => openNewEventModal(day, hourStr)}
-                            className={`flex-1 border-r border-surface-container-high relative p-1 cursor-pointer hover:bg-surface-container-low transition-colors ${
-                               today ? "bg-primary/[0.02]" : ""
+                            className={`flex-1 border-r border-surface-container-high relative p-1 cursor-pointer transition-colors ${
+                               today ? "bg-primary/[0.04]" : "hover:bg-surface-container-low"
                             }`}
                           >
                             {events

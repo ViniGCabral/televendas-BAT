@@ -163,22 +163,46 @@ export function Dashboard() {
                 <div>
                   <h3 className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 mb-3">{t('kpi_share_lmpm')}</h3>
                   <div className="flex items-baseline gap-4">
-                    <span className="text-5xl font-black font-headline tracking-tighter group-hover:scale-105 transition-transform duration-500 inline-block">+1.4%</span>
-                    <div className="bg-green-500/20 text-green-400 px-3 py-1 rounded-xl flex items-center gap-1.5 border border-green-500/10">
-                       <span className="material-symbols-outlined text-xs font-black">trending_up</span>
-                       <span className="text-[10px] font-black uppercase tracking-widest">Acima da Média</span>
+                    <span className="text-6xl font-black font-headline tracking-tighter group-hover:scale-105 transition-transform duration-500 inline-block">70%</span>
+                    <div className="bg-green-500/20 text-green-400 px-3 py-1.5 rounded-xl flex items-center gap-1.5 border border-green-500/20 shadow-[0_0_15px_rgba(34,197,94,0.2)] animate-pulse">
+                       <span className="material-symbols-outlined text-[14px] font-black">trending_up</span>
+                       <span className="text-[11px] font-black uppercase tracking-widest">+1.4% Acima da Média</span>
                     </div>
                   </div>
                 </div>
-                <div className="bg-white/10 p-3 rounded-[20px] backdrop-blur-sm border border-white/5">
-                   <span className="material-symbols-outlined text-primary text-2xl">insights</span>
+                <div className="bg-white/10 p-3 rounded-[20px] backdrop-blur-sm border border-white/5 shadow-inner">
+                   <span className="material-symbols-outlined text-primary text-2xl">monitoring</span>
                 </div>
               </div>
 
-              {/* Sparkline Visual */}
-              <div className="mt-2 flex items-end gap-1.5 h-12 mb-6">
-                 {[40, 55, 45, 60, 75, 65, 85, 70, 95, 80, 100, 90].map((h, i) => (
-                   <div key={i} className="flex-1 bg-primary/20 rounded-t-lg group-hover:bg-primary/40 transition-all duration-500" style={{ height: `${h}%`, opacity: 0.2 + (i * 0.05) }}></div>
+              {/* Real Chart Visual - trending around 70% */}
+              <div className="mt-10 flex items-end gap-2.5 h-24 mb-6 group/chart px-2 relative">
+                 {/* 70% Benchmark Line */}
+                 <div className="absolute left-0 right-0 border-t border-white/5 border-dashed z-0 pointer-events-none" style={{ bottom: '70%', height: '0px' }}>
+                    <span className="absolute -top-3 right-0 text-[7px] font-black text-white/20 uppercase tracking-widest">Benchmark 70%</span>
+                 </div>
+
+                 {[65, 68, 72, 70, 71, 69, 73, 70, 68, 71, 69, 70].map((h, i) => (
+                   <div key={i} className="flex-1 h-full flex flex-col items-center justify-end gap-3 group/bar cursor-pointer relative z-10">
+                     {/* Value Tooltip on Hover */}
+                     <span className="absolute -top-1 opacity-0 group-hover/bar:opacity-100 transition-all duration-300 text-[9px] font-black text-primary-fixed-dim -translate-y-full">
+                        {h}%
+                     </span>
+
+                     <div className="w-1.5 sm:w-2.5 h-full bg-white/5 rounded-full relative overflow-hidden group-hover/bar:bg-white/10 transition-colors">
+                        <div 
+                           className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-primary via-primary/80 to-primary-fixed-dim rounded-full transition-all duration-700 ease-out shadow-[0_0_15px_rgba(0,88,188,0.3)] group-hover/bar:shadow-[0_0_20px_rgba(0,88,188,0.6)]" 
+                           style={{ height: `${h}%` }}
+                        >
+                           {/* Inner light effect */}
+                           <div className="absolute top-0 left-0 right-0 h-1 bg-white/20"></div>
+                        </div>
+                     </div>
+                     
+                     <span className="text-[9px] font-black text-slate-500 uppercase tracking-tighter opacity-30 group-hover/bar:opacity-100 group-hover/bar:text-primary-fixed-dim transition-all font-headline">
+                        {['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'][i].charAt(0)}
+                     </span>
+                   </div>
                  ))}
               </div>
             </div>
@@ -186,16 +210,18 @@ export function Dashboard() {
             <div className="relative z-10 flex border-t border-white/10 pt-6 mt-2">
                <div className="flex-1">
                   <span className="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] block mb-1">Mês Anterior</span>
-                  <span className="text-xl font-black text-slate-200">22.1%</span>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-2xl font-black text-slate-200">69.1%</span>
+                    <span className="text-[10px] font-bold text-green-400">+0.9%</span>
+                  </div>
                </div>
-               <div className="flex-1 border-l border-white/10 pl-6">
-                  <span className="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] block mb-1">Target Anual</span>
-                  <span className="text-xl font-black text-slate-200">25.0%</span>
+               <div className="flex-1 border-l border-white/10 pl-8">
+                  <span className="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] block mb-1">Média Atual</span>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-2xl font-black text-slate-200">68.6%</span>
+                  </div>
                </div>
-               <div className="flex-1 border-l border-white/10 pl-6">
-                  <span className="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] block mb-1">Gap para Meta</span>
-                  <span className="text-xl font-black text-primary">-1.5%</span>
-               </div>
+               <div className="flex-[0.5] hidden xl:block"></div>
             </div>
          </div>
 

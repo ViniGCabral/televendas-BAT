@@ -126,6 +126,9 @@ export const initialPdvs: PDV[] = [
     }));
   })()
 ];
+const now = new Date();
+const inTwoDays = new Date();
+inTwoDays.setDate(now.getDate() + 2);
 
 const initialEvents: CallEvent[] = [
   {
@@ -133,9 +136,9 @@ const initialEvents: CallEvent[] = [
     pdvId: "p1",
     client: "Mercado Central de Alimentos Ltda",
     time: "09:00",
-    day: 12,
-    month: 10,  // November
-    year: 2024,
+    day: now.getDate(),
+    month: now.getMonth(),
+    year: now.getFullYear(),
     type: "warning",
     status: "Inadimplente",
     sapId: "00045291",
@@ -150,9 +153,9 @@ const initialEvents: CallEvent[] = [
     pdvId: "p5",
     client: "Padaria e Lanchonete Alvorada",
     time: "11:30",
-    day: 14,
-    month: 10,
-    year: 2024,
+    day: inTwoDays.getDate(),
+    month: inTwoDays.getMonth(),
+    year: inTwoDays.getFullYear(),
     type: "opportunity",
     status: "",
     sapId: "00099451",
